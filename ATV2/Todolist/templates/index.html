@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List Inteligente</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header class="cabecalho">
+            <div class="titulos">
+                <h1>To-Do-List ProgWeb</h1>
+                <p>Sistema para organizar suas tarefas do dia a dia com facilidade.</p>
+            </div>
+            
+            <div class="acoes-extras">
+                <div class="contadores">
+                    <span class="badge pendentes">Pendentes: <strong id="count-pendentes">0</strong></span>
+                    <span class="badge concluidas">Concluídas: <strong id="count-concluidas">0</strong></span>
+                </div>
+            </div>
+        </header>
+
+        <main class="layout-principal">
+            
+            <section class="area-formulario">
+                <h2>Nova Tarefa</h2>
+                <form id="form-tarefa">
+                    <div class="grupo-input">
+                        <label for="nome">Nome da Tarefa *</label>
+                        <input type="text" id="nome" placeholder="Ex: Estudar JavaScript" required>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="categoria">Categoria *</label>
+                        <select id="categoria" required>
+                            <option value="">Selecione...</option>
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Estudos">Estudos</option>
+                            <option value="Pessoal">Pessoal</option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="prioridade">Prioridade *</label>
+                        <select id="prioridade" required>
+                            <option value="">Selecione...</option>
+                            <option value="Alta">Alta (Vermelho)</option>
+                            <option value="Média">Média (Amarelo)</option>
+                            <option value="Baixa">Baixa (Verde)</option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="data">Data Limite *</label>
+                        <input type="date" id="data" required>
+                    </div>
+
+                    <button type="submit" class="btn-principal">Adicionar Tarefa</button>
+                </form>
+            </section>
+
+            <section class="area-lista">
+                <div class="barra-filtros">
+                    <div class="filtro-grupo">
+                        <label for="filtro-categoria">Filtrar por:</label>
+                        <select id="filtro-categoria">
+                            <option value="Todas">Todas as Categorias</option>
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Estudos">Estudos</option>
+                            <option value="Pessoal">Pessoal</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-grupo">
+                        <label for="ordenar-por">Ordenar por:</label>
+                        <select id="ordenar-por">
+                            <option value="data">Data Limite</option>
+                            <option value="prioridade">Prioridade</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="lista-tarefas" class="container-tarefas">
+                    <div id="mensagem-vazia" class="mensagem-vazia">
+                        <p>🎉 Nenhuma tarefa pendente! Aproveite seu dia.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
