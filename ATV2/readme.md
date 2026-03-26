@@ -1,4 +1,5 @@
-🛠 Como rodar o projeto:
+### Instruções para rodar o projeto:
+
 ### 1. Clonar projeto:
 ```bash 
 git clone https://github.com/xRod-Rodriguesx/ProgWeb-/tree/main/ATV2/Todolist 
