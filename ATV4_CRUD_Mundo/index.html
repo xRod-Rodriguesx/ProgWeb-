@@ -2,125 +2,127 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>CRUD Mundo Geográfico</title>
+  <title>CRUD Mundo Geográfico Completo</title>
   <style>
     body { font-family: system-ui, sans-serif; padding: 20px; background: #f4f4f9; }
-    .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .hidden { display: none; }
-    button { padding: 10px 15px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    button { padding: 10px 15px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; margin-top: 5px;}
     button:hover { background: #0056b3; }
     input { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     .card { border: 1px solid #ddd; padding: 15px; margin-top: 15px; border-radius: 4px; background: #fafafa; }
-    hr { border: 1px solid #eee; margin: 20px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
   </style>
 </head>
 <body>
 
-<div class="container" id="loginScreen">
-  <h2>Login - Sistema Geográfico</h2>
-  <p>Digite qualquer credencial para entrar (Simulação de Login)</p>
-  <input type="text" id="user" placeholder="Usuário (ex: admin)">
-  <input type="password" id="pass" placeholder="Senha (ex: admin)">
-  <button onclick="login()">Entrar no Sistema</button>
-</div>
-
-<div class="container hidden" id="dashboard">
-  <h2>Painel de Controle Geográfico</h2>
+<div class="container">
+  <h2>🌍 Sistema Geográfico Completo</h2>
   
-  <div class="card">
-    <h3>🌍 Cadastrar Novo Continente</h3>
-    <input type="text" id="contNome" placeholder="Nome do Continente (ex: América do Sul)">
-    <input type="text" id="contDesc" placeholder="Descrição rápida">
-    <button onclick="salvarContinente()">Salvar no Banco</button>
+  <div class="grid">
+    <div class="card">
+      <h3>1. Cadastrar Continente</h3>
+      <input type="text" id="contNome" placeholder="Nome (ex: América do Sul)">
+      <input type="text" id="contDesc" placeholder="Descrição">
+      <button onclick="salvar('continentes', {nome: document.getElementById('contNome').value, descricao: document.getElementById('contDesc').value})">Salvar Continente</button>
+    </div>
+
+    <div class="card">
+      <h3>2. Cadastrar País</h3>
+      <input type="text" id="paisNome" placeholder="Nome (ex: Brasil)">
+      <input type="number" id="paisPop" placeholder="População">
+      <input type="text" id="paisLang" placeholder="Idioma">
+      <input type="text" id="paisMoeda" placeholder="Moeda">
+      <input type="number" id="paisContId" placeholder="ID do Continente">
+      <button onclick="salvar('paises', {nome: document.getElementById('paisNome').value, populacao: Number(document.getElementById('paisPop').value), idioma_oficial: document.getElementById('paisLang').value, moeda: document.getElementById('paisMoeda').value, continenteId: document.getElementById('paisContId').value})">Salvar País</button>
+    </div>
+
+    <div class="card">
+      <h3>3. Cadastrar Cidade</h3>
+      <input type="text" id="cidNome" placeholder="Nome (ex: Caçapava)">
+      <input type="number" id="cidPop" placeholder="População">
+      <input type="number" step="any" id="cidLat" placeholder="Latitude (ex: -23.10)">
+      <input type="number" step="any" id="cidLon" placeholder="Longitude (ex: -45.70)">
+      <input type="number" id="cidPaisId" placeholder="ID do País">
+      <button onclick="salvar('cidades', {nome: document.getElementById('cidNome').value, populacao: Number(document.getElementById('cidPop').value), latitude: Number(document.getElementById('cidLat').value), longitude: Number(document.getElementById('cidLon').value), paisId: document.getElementById('cidPaisId').value})">Salvar Cidade</button>
+    </div>
   </div>
 
   <div class="card">
-    <h3>🔍 Enriquecimento de Dados (API Externa)</h3>
-    <p>Consulte dados oficiais e a bandeira de qualquer país.</p>
-    <input type="text" id="paisBusca" placeholder="Nome do País em Inglês (ex: Brazil, Japan, Germany)">
-    <button onclick="buscarPais()">Consultar API</button>
-    <div id="resultadoApi" class="card hidden"></div>
+    <h3>🔍 Integrações (APIs Externas)</h3>
+    <input type="text" id="buscaApi" placeholder="Nome do país em Inglês (ex: Brazil) para Bandeira">
+    <button onclick="buscarPais()">Buscar País</button>
+    <div id="resultadoApi" style="margin-top: 10px;"></div>
   </div>
 
   <div class="card">
-    <h3>📋 Continentes Cadastrados</h3>
-    <button onclick="listarContinentes()">Atualizar Lista</button>
-    <div id="lista" style="margin-top: 15px;"></div>
+    <h3>📋 Listagem Geral</h3>
+    <button onclick="listarTudo()">Atualizar Listas</button>
+    <div id="listas" style="margin-top: 15px; font-size: 14px;"></div>
   </div>
 </div>
 
 <script>
-  // Aponta para o servidor Node/Prisma que acabamos de configurar
   const API_URL = 'http://localhost:3000';
 
-  function login() {
-    const user = document.getElementById('user').value;
-    if(user.trim() !== '') {
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      listarContinentes();
-    } else {
-      alert('Por favor, insira um usuário!');
-    }
-  }
-
-  async function salvarContinente() {
-    const nome = document.getElementById('contNome').value;
-    const descricao = document.getElementById('contDesc').value;
-    
+  async function salvar(rota, dados) {
     try {
-      await fetch(`${API_URL}/continentes`, {
+      await fetch(`${API_URL}/${rota}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, descricao })
+        body: JSON.stringify(dados)
       });
-      alert('Continente salvo com sucesso!');
-      document.getElementById('contNome').value = '';
-      document.getElementById('contDesc').value = '';
-      listarContinentes();
-    } catch (error) {
-      alert('Erro ao salvar. Verifique se o servidor está rodando!');
+      alert('Salvo com sucesso!');
+      listarTudo();
+    } catch (e) {
+      alert('Erro ao salvar. O servidor está rodando?');
     }
   }
 
-  async function listarContinentes() {
+  async function listarTudo() {
     try {
-      const res = await fetch(`${API_URL}/continentes`);
-      const data = await res.json();
-      const divLista = document.getElementById('lista');
+      const [cont, pais, cid] = await Promise.all([
+        fetch(`${API_URL}/continentes`).then(r => r.json()),
+        fetch(`${API_URL}/paises`).then(r => r.json()),
+        fetch(`${API_URL}/cidades`).then(r => r.json())
+      ]);
       
-      if(data.length === 0) {
-        divLista.innerHTML = '<p>Nenhum continente cadastrado ainda.</p>';
-        return;
-      }
+      let html = '<h4>Continentes:</h4>' + cont.map(c => `[ID: ${c.id}] ${c.nome}`).join('<br>');
+      html += '<h4>Países:</h4>' + pais.map(p => `[ID: ${p.id}] ${p.nome} (Cont. ID: ${p.continenteId})`).join('<br>');
+      html += '<h4>Cidades:</h4>' + cid.map(c => `[ID: ${c.id}] ${c.nome} (País ID: ${c.paisId})`).join('<br>');
       
-      divLista.innerHTML = data.map(c => `<p><b>${c.nome}</b>: ${c.descricao}</p>`).join('');
-    } catch (error) {
-      document.getElementById('lista').innerHTML = '<p style="color:red;">Falha ao conectar com o servidor.</p>';
+      document.getElementById('listas').innerHTML = html;
+    } catch (e) {
+      document.getElementById('listas').innerHTML = '<span style="color:red">Falha ao conectar com o banco de dados.</span>';
     }
   }
 
   async function buscarPais() {
-    const nome = document.getElementById('paisBusca').value;
+    const nome = document.getElementById('buscaApi').value;
+    if (!nome) return alert('Digite um país!');
+    
     try {
+      // Bate na nossa API do Node, que vai bater na REST Countries
       const res = await fetch(`${API_URL}/api/pais/${nome}`);
-      if(res.ok) {
-        const data = await res.json();
-        const div = document.getElementById('resultadoApi');
-        div.innerHTML = `
-          <h4>${data.name.common} (${data.cca2})</h4>
-          <p><b>Capital:</b> ${data.capital ? data.capital[0] : 'N/A'}</p>
-          <p><b>Região:</b> ${data.region}</p>
-          <img src="${data.flags.png}" alt="Bandeira" width="150" style="border: 1px solid #ccc; margin-top: 10px;">
-        `;
-        div.classList.remove('hidden');
-      } else {
-        alert('País não encontrado na base de dados internacional.');
+      const data = await res.json();
+      
+      // Se a nossa API devolver o erro formatado, a gente avisa
+      if (data.erro) {
+        alert('Não encontrado! Tente digitar em inglês (ex: Brazil, Germany, Japan)');
+        return;
       }
-    } catch (error) {
-      alert('Erro ao buscar dados na API.');
+      
+      // Se deu sucesso, joga na tela!
+      document.getElementById('resultadoApi').innerHTML = `
+        <b>País:</b> ${data.name.common} <br>
+        <img src="${data.flags.png}" width="120" style="margin-top:8px; border: 1px solid #ccc; border-radius: 4px;">
+      `;
+    } catch (e) {
+      alert('Falha na comunicação com o servidor. Verifique se o terminal ainda está rodando!');
     }
   }
+  
+  // Lista automaticamente ao abrir
+  listarTudo();
 </script>
 </body>
 </html>
