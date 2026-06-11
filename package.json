@@ -1,0 +1,25 @@
+{
+  "name": "prog-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xRod-Rodriguesx/ProgWeb-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xRod-Rodriguesx/ProgWeb-/issues"
+  },
+  "homepage": "https://github.com/xRod-Rodriguesx/ProgWeb-#readme",
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
