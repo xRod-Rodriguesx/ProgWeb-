@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:123@localhost:5432/crud_mundo?schema=public"
+}
+
+model Continente {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  descricao String
+  paises    Pais[]
+}
+
+model Pais {
+  id             Int        @id @default(autoincrement())
+  nome           String
+  populacao      Int
+  idioma_oficial String
+  moeda          String
+  continenteId   Int
+  continente     Continente @relation(fields: [continenteId], references: [id])
+  cidades        Cidade[]
+}
+
+model Cidade {
+  id        Int    @id @default(autoincrement())
+  nome      String
+  populacao Int
+  latitude  Float
+  longitude Float
+  paisId    Int
+  pais      Pais   @relation(fields: [paisId], references: [id])
+}
